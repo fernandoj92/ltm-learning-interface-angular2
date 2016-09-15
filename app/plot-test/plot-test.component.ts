@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+
 import * as d3 from 'd3';
 
 
@@ -7,8 +8,30 @@ import * as d3 from 'd3';
     selector: 'plot-test',
     templateUrl: 'plot-test.component.html'
 })
+
 export class PlotTestComponent implements OnInit {
-    constructor() { }
+
+    @ViewChild('test') test;
+    
+    constructor(private eltRef:ElementRef) {}
+
+    ngAfterViewInit() {
+        /*
+        let chart = d3.select(this.eltRef.nativeElement)
+        .select('.chart')
+        .append("g")
+        .append("rect")
+            .attr("width", 50)
+            .attr("height", 100);
+        */
+        
+         let test = d3.select(this.test.nativeElement)
+        .append("g")
+        .append("rect")
+            .attr("width", 50)
+            .attr("height", 100);
+        
+    }
 
     ngOnInit() { 
         let numbers: number[] = [1,2,3,4];
