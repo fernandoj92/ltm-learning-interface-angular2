@@ -4,27 +4,11 @@ import {Subject} from 'rxjs/Subject'
 import {Observable} from 'rxjs/Observable'
 import {Observer} from 'rxjs/Observer'
 
-// Este servicio es el que ofrece Websockets, por ahora solo puede dar uno por instancia
-// Es decir, que se puede compartir la conexión entre varios componentes, ya que este servicio 
-// siempre mostraria lo mismo (devolveria a todos los componentes que lo incluyan lo mismo)
-
 @Injectable()
-export class WsTestService {
-
-    private subject: Subject<MessageEvent>;
+export class WsConnectionService {
 
     public connect(url): Subject<MessageEvent> {
-        if(!this.subject) {
-            console.log("Define the subjec<MessageEvent>")
-            this.subject = this.create(url);
-        }
-
-        return this.subject;
-    }
-
-    public disconnect(){
-        console.log("undefine the subject")
-        this.subject = undefined;
+        return this.create(url);
     }
 
     private create(url): Subject<MessageEvent> {
@@ -56,4 +40,5 @@ export class WsTestService {
 
         return Subject.create(observer, observable);
     }
+
 }

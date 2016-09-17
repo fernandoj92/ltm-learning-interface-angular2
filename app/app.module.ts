@@ -9,6 +9,7 @@ import { WsTestComponent }    from './ws-test/ws-test.component';
 
 // Services
 import { WsTestService }      from './ws-test/ws-test.service';
+import { ChatService }        from './chat.service'
 
 @NgModule({
   imports: [ 
@@ -22,6 +23,7 @@ import { WsTestService }      from './ws-test/ws-test.service';
   ],
   providers: [
     WsTestService,
+    ChatService
   ],
   bootstrap: [ 
     AppComponent 

@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 import {Observer} from 'rxjs/Observer'
+import {Subject} from 'rxjs/Subject'
+import {Observable} from 'rxjs/Observable'
+
+// Observable operators
+import 'rxjs/add/operator/map';
 
 import { WsTestService } from './ws-test.service'
 
@@ -12,28 +17,45 @@ import { WsTestService } from './ws-test.service'
 export class WsTestComponent implements OnInit {
 
     messages: Array<string>
-    wsConnection // No puedo inferir el tipo porque me da un error extraño: ()=> Subject<any> != Subject<any>
+    wsConnection: Subject<MessageEvent>
+    messageStream : Observable<string>
     subscription
 
-    constructor(private service: WsTestService) { }
+    constructor(private service: WsTestService) { 
+        this.messages = new Array();
+    }
 
-    defaultWsMessage = (msg) =>{
-        this.messages.push(msg)
+    defaultWsMessage = (msg:MessageEvent) =>{
+        this.messages.push(msg.data)
         console.log('Message: ' + msg);  
     }
 
     defaultWsError = (err) => {
-        console.log('Error: ' + err);
+        console.log('Error logeado por mi: ' + err);
     }
 
     defaultWsCompleted = () => {
         console.log('Completed');
     }
 
-    ngOnInit() { }
+    ngOnInit() { 
+        this.messages.push("test1");
+        this.messages.push("test2");
+        this.messages.push("test3");
+        
+    }
 
     onClickConnect(){
-        this.wsConnection = this.service.connect();
+        this.wsConnection = this.service.connect("ws://localhost:8899/testWs");
+
+        // Transformamos el stream de messageEvents en un stream de string
+        this.messageStream = this.wsConnection
+            .map((response: MessageEvent): string => {
+                let data = JSON.parse(response.data);
+                return JSON.stringify(data);
+        });
+
+        // Subscribimos un observer para utilizar los messageEvent recibidos
         this.subscription = this.wsConnection.subscribe(
             this.defaultWsMessage,
             this.defaultWsError,
@@ -42,10 +64,10 @@ export class WsTestComponent implements OnInit {
         console.log("method: onClickConnect finalizado")
     }
 
-    onClickRemove(){
+    onClickDisconnect(){
         this.subscription.unsubscribe();
-        this.service.closeConnection();
-        console.log("Adios conexion")
+        this.service.disconnect();
+        console.log("method: onClickDisconnect finalizado")
     }
 
 }
